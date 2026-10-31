@@ -1,0 +1,187 @@
+@font-face { font-family: "Jim Nightshade"; src: url("fonts/JimNightshade-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Marcellus SC"; src: url("fonts/MarcellusSC-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IM Fell DW Pica"; src: url("fonts/IMFePIrm28P.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IM Fell DW Pica"; font-style: italic; src: url("fonts/IMFePIit28P.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Fraunces"; src: url("fonts/Fraunces.ttf") format("truetype"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Fraunces"; font-style: italic; src: url("fonts/Fraunces-Italic.ttf") format("truetype"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "La Belle Aurore"; src: url("fonts/LaBelleAurore.ttf") format("truetype"); font-display: swap; }
+
+:root {
+  --void: #150d1c;
+  --bone: #e9dec8;
+  --bone-dim: #a59882;
+  --ash: #6f6556;
+  --marigold: #f4a434;
+  --ghost: #d6f0ec;
+  --serif: "IM Fell DW Pica", "Palatino Linotype", Georgia, serif;
+  --ui: "Fraunces", Georgia, serif;
+  --title: "Jim Nightshade", var(--serif);
+  --hand: "La Belle Aurore", "Segoe Script", cursive;
+  --sc: "Marcellus SC", var(--serif);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--void); }
+body {
+  overflow-x: hidden;
+  margin: 0; min-height: 100svh; color: var(--bone);
+  font: 500 17px/1.5 var(--ui);
+  font-variation-settings: "SOFT" 60, "opsz" 14;
+  background: var(--void);
+  -webkit-font-smoothing: antialiased;
+}
+/* a faint vignette and grain over everything, like old film */
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 5;
+  background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+button, input { font: inherit; color: inherit; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:focus-visible { outline: 1px solid var(--marigold); outline-offset: 4px; border-radius: 2px; }
+
+main {
+  height: 100svh; min-height: 620px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: clamp(14px, 2.4vh, 28px) 20px clamp(12px, 2vh, 22px);
+}
+
+/* title: a hand-inked wordmark between two marigold ornaments */
+.intro { position: relative; width: 100%; max-width: 1200px; text-align: center; margin-bottom: clamp(4px, 1.2vh, 12px); }
+.intro .mark { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 2vw, 26px); color: var(--marigold); }
+.intro .orn { width: clamp(50px, 7vw, 92px); height: 14px; }
+.intro .orn.flip { transform: scaleX(-1); }
+.intro h1 {
+  margin: 0; font: 400 clamp(46px, 7.2vh, 74px)/1 var(--title); color: #f6e8cb;
+  /* Jim Nightshade is a fine pen: a stroke of the same ink makes it bolder */
+  -webkit-text-stroke: 0.045em #f6e8cb;
+  paint-order: stroke fill;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 28px rgba(244, 164, 52, 0.35), 0 3px 0 rgba(0, 0, 0, 0.45);
+}
+.intro p { margin: 4px auto 0; color: #cdbd9f; font: italic 480 clamp(14.5px, 1.9vh, 16.5px)/1.45 var(--ui); max-width: 78ch; }
+.toggles { position: absolute; right: 0; top: 4px; display: flex; gap: 4px; }
+.toggles button {
+  cursor: pointer; padding: 5px 13px; font: 600 13.5px var(--ui); letter-spacing: 0.02em; color: var(--ash);
+  background: linear-gradient(180deg, #2a1c24, #1a1017); border: 0;
+  clip-path: polygon(7px 0, calc(100% - 7px) 0, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 0 calc(100% - 7px), 0 7px);
+  box-shadow: inset 0 0 0 1px rgba(244, 164, 52, 0.22);
+}
+.toggles button:hover { color: var(--bone-dim); }
+.toggles button[aria-pressed="true"] { color: #f6e8cb; box-shadow: inset 0 0 0 1px rgba(244, 164, 52, 0.6); }
+
+/* the séance itself: a 3D scene that takes all the room that is left, edge to edge */
+.stage {
+  position: relative; flex: 1 1 0; min-height: 280px; width: 100vw; margin: 0 -20px;
+  /* the scene fades into the dark room at its edges: no hard borders */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+}
+#board { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.notice {
+  position: absolute; left: 50%; top: 54%; transform: translate(-50%, -50%);
+  max-width: min(520px, 84%); margin: 0; padding: 14px 20px; text-align: center; font-size: 16px;
+  color: var(--bone); background: rgba(6, 4, 4, 0.9); border: 1px solid rgba(233, 222, 200, 0.15); border-radius: 6px;
+}
+.notice code { font-family: var(--serif); font-style: italic; color: var(--marigold); }
+
+/* the answer */
+.spoken { width: 100%; max-width: 1180px; min-height: clamp(70px, 9.5vh, 96px); padding-top: clamp(2px, 0.6vh, 8px); text-align: center; display: flex; flex-direction: column; justify-content: center; }
+.cells:empty + .hint { margin-top: 0; }
+.cells { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px 0.55em; font-size: clamp(28px, 4.3vh, 42px); line-height: 1; letter-spacing: 0.04em; }
+.word { display: inline-flex; gap: 0.1em; white-space: nowrap; }
+.cell { position: relative; display: inline-block; }
+.cell .ch {
+  font-family: var(--sc); color: var(--marigold);
+  text-shadow: 0 0 18px rgba(244, 164, 52, 0.55), 0 0 2px rgba(255, 220, 160, 0.6);
+  animation: burn 0.9s ease-out;
+}
+.cell .alt {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px; letter-spacing: 0;
+  font-size: 14px; font-weight: 600; line-height: 1.2; color: var(--ghost); opacity: 0.55; white-space: nowrap; text-align: center;
+}
+.cell .alt span { display: block; }
+.cell .alt small { font-size: 10px; opacity: 0.8; }
+.cells.yesno .ch { color: #ffd690; }
+@keyframes burn {
+  0% { color: #fff6e2; text-shadow: 0 0 34px rgba(255, 214, 140, 1), 0 0 8px #fff; }
+  100% { }
+}
+.hint { margin: 12px auto 0; color: #c4b49b; font: italic 500 16px var(--ui); max-width: 70ch; min-height: 1.5em; }
+
+/* asking */
+.ask {
+  display: flex; align-items: center; gap: 12px; width: 100%; max-width: 640px;
+  margin-top: clamp(6px, 1.4vh, 12px);
+  border-bottom: 1px solid rgba(233, 222, 200, 0.22);
+  transition: border-color 0.3s;
+}
+.ask:focus-within { border-bottom-color: rgba(244, 164, 52, 0.6); }
+.ask input {
+  flex: 1; min-width: 0; background: none; border: 0; outline: none;
+  font-family: var(--hand); font-size: clamp(24px, 3.3vh, 31px); padding: 10px 2px 4px; color: #f6e8cb;
+  caret-color: var(--marigold);
+}
+.ask input::placeholder { color: rgba(233, 222, 200, 0.28); }
+.ask button { background: none; border: 0; cursor: pointer; font: 400 17px "Marcellus SC", var(--serif); letter-spacing: 0.16em; -webkit-text-stroke: 0.35px currentColor; padding: 6px 2px; color: var(--marigold); }
+.ask button:hover { color: #ffc977; }
+#byeBtn { color: var(--bone-dim); }
+.ask .mic { width: 34px; height: 34px; padding: 0; display: grid; place-items: center; }
+.mic svg { width: 18px; height: 18px; fill: var(--bone-dim); }
+.mic.rec svg { fill: #e0503f; }
+
+.examples { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 0; max-width: 900px; margin-top: 12px; }
+.examples button {
+  background: none; border: 0; cursor: pointer; padding: 3px 14px;
+  font: italic 560 16.5px var(--ui); color: #d9cab0; transition: color 0.2s;
+}
+.examples button + button::before {
+  content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 16px 0 -14px; transform: translateY(-2px) rotate(45deg);
+  background: var(--marigold); opacity: 0.75;
+}
+.examples button:hover { color: #ffcf86; }
+.examples button:disabled { opacity: 0.35; cursor: default; }
+
+.spirits { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 14px; }
+.spirit-wrap { filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45)); transition: filter 0.3s; }
+.spirit-wrap.on { filter: drop-shadow(0 0 16px rgba(244, 164, 52, 0.28)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45)); }
+.spirit {
+  display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer; border: 0;
+  padding: 9px 20px 10px 14px; min-width: 240px; color: var(--bone-dim);
+  background: linear-gradient(180deg, #2c1d24 0%, #1d1219 100%);
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+  box-shadow: inset 0 0 0 1px rgba(244, 164, 52, 0.2), inset 0 1px 0 rgba(255, 220, 170, 0.08);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.spirit svg { width: 30px; height: 30px; flex: none; color: rgba(244, 164, 52, 0.7); }
+.spirit .txt { display: flex; flex-direction: column; gap: 1px; }
+.spirit .n { font: 400 16.5px "Marcellus SC", var(--serif); letter-spacing: 0.06em; color: #efe1c5; -webkit-text-stroke: 0.3px currentColor; }
+.spirit .d { font: italic 500 13.5px var(--ui); color: #9f907b; }
+.spirit:hover { box-shadow: inset 0 0 0 1px rgba(244, 164, 52, 0.45), inset 0 1px 0 rgba(255, 220, 170, 0.1); }
+.spirit[aria-checked="true"] {
+  background: linear-gradient(180deg, #4a2c1a 0%, #2a170f 100%);
+  box-shadow: inset 0 0 0 1.5px rgba(244, 164, 52, 0.85), inset 0 1px 0 rgba(255, 220, 170, 0.25), inset 0 -14px 24px rgba(244, 164, 52, 0.08);
+}
+.spirit[aria-checked="true"] svg { color: #ffc061; }
+.spirit[aria-checked="true"] .d { color: #d9c6a6; }
+
+.advanced { margin-top: 8px; font-size: 14px; color: var(--ash); }
+.advanced button { background: none; border: 0; color: var(--ash); cursor: pointer; font: 14px var(--serif); }
+.advanced button[aria-pressed="true"] { color: var(--bone); text-decoration: underline; }
+
+.recs { list-style: none; max-width: 640px; margin: 18px auto 0; padding: 0; display: grid; gap: 2px; }
+.recs button { background: none; border: 0; cursor: pointer; text-align: left; width: 100%; padding: 4px 0; color: var(--bone-dim); font-size: 16px; font-style: italic; }
+.recs button:hover { color: var(--bone); }
+.recs .a { font-family: var(--sc); font-style: normal; color: var(--marigold); margin-left: 12px; }
+
+@media (max-width: 720px) {
+  .toggles { position: static; justify-content: center; margin-top: 8px; }
+  .spirit-wrap, .spirit { min-width: 0; width: 100%; }
+  main { height: auto; }
+  .stage { flex: none; height: 62vw; min-height: 240px; }
+  .cells { font-size: 30px; }
+}
+@media (prefers-reduced-motion: reduce) { .cell .ch { animation: none; } }
+
+.hint.torn { color: #f0dcb4; text-shadow: 0 0 16px rgba(244, 164, 52, 0.45); }

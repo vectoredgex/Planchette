@@ -1,0 +1,27 @@
+# secrets
+.env
+.env.txt
+*.env.txt
+
+# local runtime files
+__pycache__/
+*.pyc
+planchette.log
+seances/*.json
+!seances/.keep
+tools/jobs/
+tools/probe*
+dist/
+
+# old experiments and unused files
+web/board.js
+web/scene.js
+web/fonts/CormorantGaramond*
+web/fonts/Manrope*
+web/fonts/IMFeEN*
+web/fonts/OFL-Cormorant.txt
+web/fonts/OFL-Manrope.txt
+web/fonts/OFL.txt
+docs/screenshot.png
+docs/dev-post.md
+publish.bat

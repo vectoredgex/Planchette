@@ -1,0 +1,86 @@
+# Planchette
+
+**A Ouija board haunted by an open AI model.**
+
+![The planchette swinging between letters while Gemma decides](docs/planchette.gif)
+
+You ask the spirit a question. Gemma, running locally on your machine, writes the answer one token at a time, and the planchette spells it out letter by letter. It doesn't follow a canned animation: every move follows **Gemma's real probability for the next letter**. When the model is sure, the planchette glides straight to it. When the model is torn, the planchette is torn too, swinging between letters before it commits.
+
+▶ **[Watch the demo](https://vimeo.com/1241776139/5405ea774b)**
+
+![Planchette: a dark Ouija board lit by candles and marigolds](docs/screenshot.jpg)
+
+## Features
+
+- **Three spirits**
+  - **The Wanderer**, a lost soul trapped in the board
+  - **Abuela**, a grandmother home for Día de los Muertos
+  - **The Machine Ghost**, which lives inside your computer
+- **Live odds.** While it's deciding, the board shows the top candidates and a line like *"Torn between S (61%) and H (30%)…"*.
+- **It doesn't always let you leave.** Say goodbye and Gemma is asked whether it wants you to stay. Those real odds decide whether the planchette drags itself back to NO and tells you why.
+- **It moves on its own.** Go quiet after an answer and, after a while, the planchette starts spelling something by itself.
+- **A room that reacts.** It has room tone, a faraway music box, knocks, a candle gust and a creaking floor. Whispers rise and fall with how uncertain the model is.
+- **Fully offline.** No account needed, and nothing you type leaves your computer.
+
+## Run it
+
+You need [Ollama](https://ollama.com) and Python 3.10 or newer. Nothing else: no `pip install`, no build step.
+
+```bash
+ollama pull gemma3
+python server.py
+```
+
+On Windows you can just double-click **`start.bat`**. The board opens at <http://localhost:7666>.
+
+The first question can take around 30 seconds while Gemma loads into memory. After that, answers take a few seconds.
+
+**Keyboard:** `Esc` lets go of the planchette, `M` mutes, `F` toggles full screen.
+
+### Optional: ElevenLabs
+
+The sound effects in `sounds/` were generated once with the ElevenLabs Sound Effects API and are included. To regenerate them, or to ask your questions out loud with the mic button (speech-to-text), copy `.env.example` to `.env` and add your key:
+
+```
+ELEVENLABS_API_KEY=your-key-here
+```
+
+The key needs the **Sound Effects** and **Speech to Text** permissions. Without a key everything still works: the included sounds play, and any missing ones fall back to built-in Web Audio sounds.
+
+## How it works
+
+For every step, the server asks Ollama for exactly **one** token with `logprobs` and the top 20 alternatives:
+
+```python
+{"model": "gemma3:4b", "prompt": prompt, "raw": True,
+ "logprobs": True, "top_logprobs": 20, "options": {"num_predict": 1}}
+```
+
+Models think in tokens (`DARK`, `NESS`, ` WATCH`), not letters. So Planchette lets Gemma pick a whole token, sampled from its own distribution, and then **spells** it. At each letter, it groups the candidate tokens by the letter that comes next and adds up their probabilities. That gives the real odds for the next letter on the board, and the planchette is pulled between candidates by exactly that much.
+
+A side effect: the planchette glides through the middle of words (the model has committed) and wavers at the start of words (where the real decisions happen).
+
+Everything lives in a few files:
+
+| File | What it does |
+|---|---|
+| `engine.py` | the séance: token sampling, letter odds, the three spirits |
+| `server.py` | a small standard-library HTTP server that streams each step to the browser |
+| `web/board3d.js` | the low-poly 3D board (three.js), with candles, marigolds and planchette physics |
+| `web/audio.js` | the room's sound: samples plus procedural Web Audio |
+| `web/app.js` | the page: questions, goodbyes, the planchette moving on its own |
+
+Other models work too (any Ollama model with logprobs). Gemma 3 4B is the default because it's small, fast and wonderfully eerie.
+
+## Credits
+
+- [Gemma 3](https://ai.google.dev/gemma) by Google DeepMind, run with [Ollama](https://ollama.com)
+- Sound effects generated with [ElevenLabs](https://elevenlabs.io)
+- [three.js](https://threejs.org) (MIT), included in `web/vendor`
+- Fonts: Jim Nightshade, Marcellus SC, Fraunces, IM Fell DW Pica, La Belle Aurore (all SIL Open Font License, see `web/fonts`)
+
+Built for the DEV [Hacktoberfest Open-Source AI Challenge: Ghost in the Machine](https://dev.to/challenges/hacktoberfest-week4-2026-10-26).
+
+## License
+
+MIT
