@@ -4,7 +4,7 @@
 
 ![The planchette swinging between letters while Gemma decides](docs/planchette.gif)
 
-You ask the spirit a question. Gemma, running locally on your machine, writes the answer one token at a time, and the planchette spells it out letter by letter. It doesn't follow a canned animation: every move follows **Gemma's real probability for the next letter**. When the model is sure, the planchette glides straight to it. When the model is torn, the planchette is torn too, swinging between letters before it commits.
+You ask the spirit a question and Gemma (running locally on your machine) answers it, one letter at a time on the board. The planchette isn't animated by hand. It moves according to **Gemma's real probability for the next letter**, so if Gemma is sure it goes straight there, and if it's torn between two letters you can watch it swing between them before it picks one.
 
 ▶ **[Watch the demo](https://vimeo.com/1241776139/5405ea774b)**
 
@@ -16,11 +16,11 @@ You ask the spirit a question. Gemma, running locally on your machine, writes th
   - **The Wanderer**, a lost soul trapped in the board
   - **Abuela**, a grandmother home for Día de los Muertos
   - **The Machine Ghost**, which lives inside your computer
-- **Live odds.** While it's deciding, the board shows the top candidates and a line like *"Torn between S (61%) and H (30%)…"*.
-- **It doesn't always let you leave.** Say goodbye and Gemma is asked whether it wants you to stay. Those real odds decide whether the planchette drags itself back to NO and tells you why.
-- **It moves on its own.** Go quiet after an answer and, after a while, the planchette starts spelling something by itself.
-- **A room that reacts.** It has room tone, a faraway music box, knocks, a candle gust and a creaking floor. Whispers rise and fall with how uncertain the model is.
-- **Fully offline.** No account needed, and nothing you type leaves your computer.
+- **Live odds.** While it's deciding, the board shows the top few letters it's considering and what it's torn between.
+- **It doesn't always let you leave.** When you say goodbye, Gemma is asked if it wants you to stay, and if it does, the planchette drags itself back to NO and tells you why.
+- **It moves on its own.** Leave it alone for a bit after an answer and it starts spelling something by itself.
+- **Sound.** Room tone, a faraway music box, knocks, creaks and a gust when the candles go out. The whispers get louder the more unsure the model is.
+- **Offline.** No accounts, no API needed, nothing you type leaves your computer.
 
 ## Run it
 
@@ -58,7 +58,7 @@ For every step, the server asks Ollama for exactly **one** token with `logprobs`
 
 Models think in tokens (`DARK`, `NESS`, ` WATCH`), not letters. So Planchette lets Gemma pick a whole token, sampled from its own distribution, and then **spells** it. At each letter, it groups the candidate tokens by the letter that comes next and adds up their probabilities. That gives the real odds for the next letter on the board, and the planchette is pulled between candidates by exactly that much.
 
-A side effect: the planchette glides through the middle of words (the model has committed) and wavers at the start of words (where the real decisions happen).
+Because of this, the planchette usually glides through the middle of a word (the model has already committed) and hesitates at the start of words, which is where it's actually deciding.
 
 Everything lives in a few files:
 
@@ -70,7 +70,7 @@ Everything lives in a few files:
 | `web/audio.js` | the room's sound: samples plus procedural Web Audio |
 | `web/app.js` | the page: questions, goodbyes, the planchette moving on its own |
 
-Other models work too (any Ollama model with logprobs). Gemma 3 4B is the default because it's small, fast and wonderfully eerie.
+Other Ollama models work too, as long as they return logprobs. I use Gemma 3 4B because it's small enough to run fast on a laptop, and its answers are properly creepy.
 
 ## Credits
 
