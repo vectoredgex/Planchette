@@ -2,7 +2,7 @@
 
 **A Ouija board haunted by an open AI model.**
 
-![The planchette swinging between letters while Gemma decides](docs/planchette.gif)
+![Asking "Is someone standing behind me?": the planchette swings between letters while Gemma decides, then spells SHE SEES MORE THAN YOU](docs/planchette-demo.gif)
 
 You ask the spirit a question and Gemma (running locally on your machine) answers it, one letter at a time on the board. The planchette isn't animated by hand. It moves according to **Gemma's real probability for the next letter**, so if Gemma is sure it goes straight there, and if it's torn between two letters you can watch it swing between them before it picks one.
 
